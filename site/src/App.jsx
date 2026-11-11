@@ -24,11 +24,11 @@ const MERIDIAN_FIGMA = 'https://www.figma.com/design/tdISwGbz7cOHeUgop5YyjJ/meri
 
 // Edit the tags to match exactly what you offer.
 const SKILLS = [
-  ['App development', 'Production mobile and web apps, from architecture to store release.', 'phone_iphone', '#C494CD',
+  ['App development', 'Production mobile and web apps, from architecture to store release.', 'phone_iphone', '#C084FC',
     ['Flutter', 'Dart', 'Riverpod', 'Firebase', 'REST APIs', 'Payments', 'Maps', 'Push']],
   ['Salesforce', 'Custom apps and automation on the Salesforce platform.', 'cloud', '#3AA0F0',
     ['Apex', 'SOQL', 'Lightning Web Components', 'Flows', 'Triggers', 'Integrations']],
-  ['UI/UX design', 'Interfaces that look premium and stay usable on every screen size.', 'draw', '#F9943B',
+  ['UI/UX design', 'Interfaces that look premium and stay usable on every screen size.', 'draw', '#FB923C',
     ['Figma', 'Prototyping', 'Design systems', 'Responsive UI', 'Accessibility']],
 ];
 
@@ -81,7 +81,7 @@ export default function App() {
   const top = narrow ? 72 : 130;
 
   return (
-    <div style={{ background: C.bg, minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
       <a className="skip" href="#main">Skip to content</a>
       <Nav
         narrow={narrow}
@@ -241,12 +241,13 @@ function Nav({ narrow, gutter, links, onContact, active, onHome }) {
 }
 
 function Btn({ label, onClick, href, outline = false, small = false, grad = false, icon, iconOutlined = false, ariaLabel }) {
-  const fg = grad ? '#fff' : outline ? C.tx : C.bg;
+  const fill = grad || !outline;
+  const fg = fill ? '#fff' : C.tx;
   const external = href && /^https?:/.test(href);
   const Tag = href ? 'a' : 'button';
   return (
     <Tag
-      className={`btn ${grad ? 'btn-g' : outline ? 'btn-o' : 'btn-f'} ${small ? 'btn-s' : ''}`}
+      className={`btn ${fill ? 'btn-g' : 'btn-o'} ${small ? 'btn-s' : ''}`}
       href={href}
       onClick={onClick}
       target={external ? '_blank' : undefined}
@@ -599,7 +600,7 @@ function MedNuWork({ narrow }) {
       <div
         style={{
           gridArea: '1 / 1', width: `min(${phoneW * 1.5}px, 100%)`, height: phoneW * 1.5,
-          background: `radial-gradient(circle closest-side, ${a(M.plum2, 0.7)}, ${a(M.plum, 0)})`,
+          background: 'radial-gradient(circle closest-side, rgba(139, 92, 246, .55), rgba(217, 70, 239, .18) 55%, transparent)',
         }}
       />
       {layers.map((l) => {
@@ -892,7 +893,7 @@ function Contact({ narrow, onCopied }) {
       {...spotlight}
       style={{
         padding: narrow ? 28 : 72, borderRadius: 40, '--accent': C.orchid,
-        background: 'linear-gradient(var(--diag, 135deg), #3A1B33, #15101A, #1F1410)',
+        background: 'linear-gradient(var(--diag, 135deg), #2E1065, #120D2B 55%, #3B0A45)',
       }}
     >
       <div className="contact-orb" aria-hidden="true" />

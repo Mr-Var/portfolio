@@ -1,12 +1,12 @@
 :root {
-  --bg: #09080D;
-  --s1: #121018;
-  --s2: #1B1823;
-  --line: #2A2533;
-  --tx: #F4F0F8;
-  --mute: #9D95AD;
-  --orchid: #C494CD;
-  --coral: #F9943B;
+  --bg: #08061A;
+  --s1: #120E26;
+  --s2: #1C1638;
+  --line: #2A2347;
+  --tx: #F5F3FF;
+  --mute: #A49DC0;
+  --orchid: #C084FC;
+  --coral: #FB923C;
   --ease-out: cubic-bezier(.215, .61, .355, 1);
   --ease-spring: cubic-bezier(.34, 1.4, .64, 1);
   --nav-bg: rgba(16, 10, 34, .55);
@@ -15,10 +15,13 @@
   --chip: rgba(255, 255, 255, .04);
   --btn-line: rgba(255, 255, 255, .16);
   --sheet-bg: rgba(9, 8, 13, .97);
-  --hero-bg: linear-gradient(180deg, #07051A 0%, #0A0718 70%, #09080D 100%);
+  --hero-bg: transparent;
   --wave-o: .55;
+  --amb-1: rgba(124, 58, 237, .16);
+  --amb-2: rgba(192, 38, 211, .12);
+  --amb-3: rgba(79, 70, 229, .12);
   --dot: rgba(255, 255, 255, .08);
-  --scroll-thumb: #3a3346;
+  --scroll-thumb: #3B2F66;
   color-scheme: dark;
 }
 :root[data-theme="light"] {
@@ -34,16 +37,19 @@
   --chip: rgba(23, 18, 31, .04);
   --btn-line: rgba(23, 18, 31, .18);
   --sheet-bg: rgba(247, 245, 251, .97);
-  --hero-bg: linear-gradient(180deg, #F1EAFF 0%, #F7F5FB 100%);
+  --hero-bg: transparent;
   --wave-o: .22;
+  --amb-1: rgba(124, 58, 237, .07);
+  --amb-2: rgba(192, 38, 211, .05);
+  --amb-3: rgba(79, 70, 229, .05);
   --dot: rgba(23, 18, 31, .09);
   --scroll-thumb: #cfc6dc;
   color-scheme: light;
 }
-:root[data-theme="light"] .contact { background: linear-gradient(135deg, #F3E5F7, #FFFFFF 55%, #FFF0E3) !important; }
+:root[data-theme="light"] .contact { background: linear-gradient(135deg, #EDE4FF, #FFFFFF 55%, #FCE7F6) !important; }
 :root[data-theme="light"] .nav { box-shadow: 0 10px 40px rgba(76, 29, 149, .08); }
 :root[data-theme="light"] .nav-link.on { color: #4C1D95; }
-:root[data-theme="light"] .eyebrow { color: #8A3D9C !important; }
+:root[data-theme="light"] .eyebrow { color: #7E22CE !important; }
 
 *, *::before, *::after { box-sizing: border-box; background-origin: border-box; }
 
@@ -55,7 +61,12 @@ html::-webkit-scrollbar-track { background: var(--bg); }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background:
+    radial-gradient(900px 700px at -10% 35%, var(--amb-1), transparent 65%),
+    radial-gradient(900px 700px at 110% 65%, var(--amb-2), transparent 65%),
+    radial-gradient(700px 500px at 15% 92%, var(--amb-3), transparent 65%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--tx);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -66,7 +77,7 @@ body {
 img { display: block; }
 button { font: inherit; color: inherit; }
 ul, ol { list-style: none; margin: 0; padding: 0; }
-::selection { background: rgba(196, 148, 205, .35); color: #fff; }
+::selection { background: rgba(168, 85, 247, .45); color: #fff; }
 
 /* Keyboard focus: always visible, never on mouse click. */
 :focus-visible { outline: 2px solid var(--orchid); outline-offset: 3px; border-radius: 12px; }
@@ -127,7 +138,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   content: '';
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%),
-    color-mix(in srgb, var(--accent, #C494CD) 16%, transparent), transparent 60%);
+    color-mix(in srgb, var(--accent, #A855F7) 18%, transparent), transparent 60%);
   opacity: 0; transition: opacity 300ms ease;
 }
 .spot::after {
@@ -135,7 +146,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   position: absolute; inset: -1px; border-radius: inherit; pointer-events: none;
   padding: 1px;
   background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%),
-    color-mix(in srgb, var(--accent, #C494CD) 70%, transparent), transparent 70%);
+    color-mix(in srgb, var(--accent, #A855F7) 75%, transparent), transparent 70%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   opacity: 0; transition: opacity 300ms ease;
@@ -418,7 +429,7 @@ article:hover .skill-icon { transform: rotate(-8deg) scale(1.08); }
 .tab-desc.open { grid-template-rows: 1fr; }
 .tab-timer {
   position: absolute; left: 18px; right: 18px; bottom: 0; height: 2px; border-radius: 2px;
-  background: linear-gradient(90deg, var(--orchid), var(--coral));
+  background: linear-gradient(90deg, #FB923C, #EC4899, #A855F7);
   transform-origin: 0 50%; animation: timer linear both;
 }
 .tab-timer.hold { animation-play-state: paused; }
@@ -515,14 +526,14 @@ article:hover .skill-icon { transform: rotate(-8deg) scale(1.08); }
 .step-top { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; }
 .step-icon {
   width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  background: rgba(196, 148, 205, .1); border: 1px solid rgba(196, 148, 205, .25);
+  background: rgba(168, 85, 247, .12); border: 1px solid rgba(168, 85, 247, .3);
   transition: transform 400ms var(--ease-spring);
 }
 .step:hover .step-icon { transform: translateY(-3px) rotate(6deg); }
 .step-rule { height: 1px; background: var(--line); position: relative; overflow: hidden; }
 .step-rule > span {
   position: absolute; inset: 0; transform-origin: 0 50%;
-  background: linear-gradient(90deg, var(--orchid), var(--coral));
+  background: linear-gradient(90deg, #FB923C, #EC4899, #A855F7);
   transform: scaleX(1); transition: transform 900ms var(--ease-out);
   transition-delay: calc(var(--d, 0ms) + 200ms);
 }
@@ -532,7 +543,7 @@ article:hover .skill-icon { transform: rotate(-8deg) scale(1.08); }
 .contact { overflow: hidden; }
 .contact-orb {
   position: absolute; width: 520px; height: 520px; right: -140px; top: -180px; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle closest-side, rgba(249, 148, 59, .22), transparent);
+  background: radial-gradient(circle closest-side, rgba(236, 72, 153, .28), transparent);
   animation: drift-b 16s ease-in-out infinite alternate;
 }
 
@@ -618,3 +629,8 @@ article:hover .skill-icon { transform: rotate(-8deg) scale(1.08); }
   .built-sep { display: none; }
   .nav { padding-left: 20px; }
 }
+
+/* Cards pick up a faint violet edge so every section matches the hero. */
+.card { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04); }
+.tab.on { box-shadow: 0 0 0 1px rgba(168, 85, 247, .25), 0 10px 30px -12px rgba(168, 85, 247, .45); }
+.eyebrow-line { background: linear-gradient(90deg, #FB923C, #A855F7); opacity: 1; }

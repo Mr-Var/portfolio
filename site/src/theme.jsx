@@ -9,8 +9,8 @@ export const C = {
   line: 'var(--line)',
   tx: 'var(--tx)',
   mute: 'var(--mute)',
-  orchid: '#C494CD',
-  coral: '#F9943B',
+  orchid: '#C084FC',
+  coral: '#FB923C',
 };
 
 /** hex (#RRGGBB) + alpha -> rgba() */
