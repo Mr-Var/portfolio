@@ -1,13 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 // ── Page theme (mirrors the Flutter constants) ───────────────
+// Surface/text colours are CSS variables so the light/dark toggle can swap them.
 export const C = {
-  bg: '#09080D',
-  s1: '#121018',
-  s2: '#1B1823',
-  line: '#2A2533',
-  tx: '#F4F0F8',
-  mute: '#9D95AD',
+  bg: 'var(--bg)',
+  s1: 'var(--s1)',
+  s2: 'var(--s2)',
+  line: 'var(--line)',
+  tx: 'var(--tx)',
+  mute: 'var(--mute)',
   orchid: '#C494CD',
   coral: '#F9943B',
 };

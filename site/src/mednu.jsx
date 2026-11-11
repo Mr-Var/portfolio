@@ -449,17 +449,18 @@ export function MedNuBooking() {
             <span style={t(12, { c: '#E0C6DB' })}>Senior Cardiologist · MD, DM</span>
           </div>
         </div>
+        {/* Stats card overlaps the header; kept outside the clipped body so it is never cut off. */}
+        <Pad style={{ position: 'relative', top: -26, zIndex: 1, flexShrink: 0 }}>
+          <div style={{ ...row, padding: '14px 0', background: '#fff', borderRadius: 22, boxShadow: lift }}>
+            {[['1.2k', 'Patients'], ['12 yrs', 'Experience'], ['4.9', 'Rating']].map(([v, l]) => (
+              <div key={l} style={{ ...col, alignItems: 'center', flex: '1 1 0' }}>
+                <span style={t(16, { w: 600, c: M.plum })}>{v}</span>
+                <span style={t(10.5, { c: M.inkSoft })}>{l}</span>
+              </div>
+            ))}
+          </div>
+        </Pad>
         <Body style={{ alignItems: 'stretch' }}>
-          <Pad style={{ transform: 'translateY(-26px)' }}>
-            <div style={{ ...row, padding: '14px 0', background: '#fff', borderRadius: 22, boxShadow: lift }}>
-              {[['1.2k', 'Patients'], ['12 yrs', 'Experience'], ['4.9', 'Rating']].map(([v, l]) => (
-                <div key={l} style={{ ...col, alignItems: 'center', flex: '1 1 0' }}>
-                  <span style={t(16, { w: 600, c: M.plum })}>{v}</span>
-                  <span style={t(10.5, { c: M.inkSoft })}>{l}</span>
-                </div>
-              ))}
-            </div>
-          </Pad>
           <Pad>
             <div style={row}>
               <span style={t(15, { w: 600 })}>Pick a day</span>

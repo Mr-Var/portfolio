@@ -11,6 +11,7 @@ import skyfitDesktop from './assets/real/skyfit_desktop.jpg';
 
 // Edit these to personalise the page.
 const NAME = 'VAR';
+const FULL_NAME = 'Vinayananda Raju';
 const EMAIL = 'vinayanandharaju215@gmail.com';
 const PHONE = '+91 77992 30357';
 const RESUME = 'https://drive.google.com/file/d/10mvAQFTDiIcQfnxl9eJ_drvLkOBCyHpp/view?usp=sharing';
@@ -69,7 +70,7 @@ export default function App() {
   const figma = useRef(null);
   const process = useRef(null);
   const contact = useRef(null);
-  const active = useActiveSection([skills, work, web, figma, process, contact]);
+  const active = useActiveSection([skills, work, web, figma, process]);
   const [toast, showToast] = useToast();
   useRevealAll();
 
@@ -86,8 +87,9 @@ export default function App() {
         narrow={narrow}
         gutter={gutter}
         active={active}
-        links={[['Skills', go(skills)], ['Work', go(work)], ['Websites', go(web)], ['Figma', go(figma)]]}
+        links={[['Skills', go(skills)], ['Work', go(work)], ['Websites', go(web)], ['Figma', go(figma)], ['About', go(process)]]}
         onContact={go(contact)}
+        onHome={() => scrollToEl(document.body)}
       />
       <main id="main">
         <Hero narrow={narrow} gutter={gutter} vw={w} onWork={go(work)} onContact={go(contact)} />
@@ -125,9 +127,27 @@ const Frame = forwardRef(function Frame({ g, top = 0, bottom = 0, children, id }
   );
 });
 
+// ── Theme (dark default, remembered per browser) ─────────────
+function useTheme() {
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#F7F5FB' : '#07051A');
+    try { localStorage.setItem('theme', theme); } catch { /* private mode */ }
+  }, [theme]);
+  return [theme, () => setTheme((t) => (t === 'light' ? 'dark' : 'light'))];
+}
+
 // ── Nav ──────────────────────────────────────────────────────
-function Nav({ narrow, gutter, links, onContact, active }) {
+function Nav({ narrow, gutter, links, onContact, active, onHome }) {
   const progress = useScrollProgress();
+  const [theme, toggleTheme] = useTheme();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -147,169 +167,290 @@ function Nav({ narrow, gutter, links, onContact, active }) {
   }, [open]);
 
   const pick = (fn) => () => { setOpen(false); fn(); };
+  const all = [['Home', onHome, 'home'], ...links];
+  const activeIdx = active + 1; // -1 (hero) -> Home
 
   return (
     <>
-    <nav className={`nav ${scrolled ? 'scrolled' : ''}`} style={{ padding: `0 ${gutter}px` }} aria-label="Primary">
-      <div className="nav-in">
-        <a href="#main" className="logo" onClick={(e) => { e.preventDefault(); scrollToEl(document.body); }} aria-label="Back to top">
-          <span style={disp(28)}>{NAME}</span>
+      <div className="nav-progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
+      <nav className={`nav ${scrolled ? 'scrolled' : ''}`} style={{ left: gutter, right: gutter }} aria-label="Primary">
+        <a href="#main" className="logo" onClick={(e) => { e.preventDefault(); onHome(); }} aria-label={`${FULL_NAME} — back to top`}>
+          <span style={disp(30)}>{NAME}</span>
           <span className="nav-dot" />
         </a>
         <span style={{ flex: 1 }} />
         {!narrow && (
           <div className="nav-links">
-            {links.map(([label, onTap], i) => (
+            {all.map(([label, onTap, ic], i) => (
               <button
                 key={label}
-                className={`nav-link ${active === i ? 'on' : ''}`}
-                style={{ ...ui(14, { w: 500 }), color: undefined }}
+                className={`nav-link ${activeIdx === i ? 'on' : ''}`}
                 onClick={onTap}
-                aria-current={active === i ? 'true' : undefined}
+                aria-current={activeIdx === i ? 'true' : undefined}
               >
+                {ic && activeIdx === i && <Icon n={ic} s={18} />}
                 {label}
               </button>
             ))}
           </div>
         )}
-        <span style={{ width: 14, flexShrink: 0 }} />
-        <Btn label="Get in touch" onClick={onContact} small />
+        <span style={{ flex: 1 }} />
+        <button
+          className="round-btn"
+          onClick={toggleTheme}
+          aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
+          title={theme === 'light' ? 'Dark theme' : 'Light theme'}
+        >
+          <Icon n={theme === 'light' ? 'dark_mode' : 'light_mode'} s={20} />
+        </button>
+        {!narrow && (
+          <>
+            <span style={{ width: 12, flexShrink: 0 }} />
+            <Btn label="Get in touch" onClick={onContact} small grad icon="arrow_forward" />
+          </>
+        )}
         {narrow && (
           <button
-            className="menu-btn"
+            className="round-btn"
+            style={{ marginLeft: 8 }}
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? 'Close menu' : 'Open menu'}
           >
-            <Icon n={open ? 'close' : 'menu'} s={22} c={C.tx} />
+            <Icon n={open ? 'close' : 'menu'} s={22} />
           </button>
         )}
-      </div>
-      <div className="nav-progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
-    </nav>
-    {/* Sheet lives outside <nav>: the nav's backdrop-filter would trap position:fixed. */}
+      </nav>
+      {/* Sheet lives outside <nav>: the nav's backdrop-filter would trap position:fixed. */}
       {narrow && (
         <div id="mobile-menu" className={`sheet ${open ? 'open' : ''}`} hidden={!open}>
-          {links.map(([label, onTap], i) => (
-            <button key={label} className={`sheet-link ${active === i ? 'on' : ''}`} onClick={pick(onTap)}>
+          {all.map(([label, onTap], i) => (
+            <button key={label} className={`sheet-link ${activeIdx === i ? 'on' : ''}`} onClick={pick(onTap)}>
               <span style={ui(12, { c: C.coral, w: 600 })}>{String(i + 1).padStart(2, '0')}</span>
               <span style={disp(36)}>{label}</span>
               <Icon n="arrow_forward" s={20} c={C.mute} />
             </button>
           ))}
+          <div style={{ height: 18 }} />
+          <Btn label="Get in touch" onClick={pick(onContact)} grad icon="arrow_forward" />
         </div>
       )}
     </>
   );
 }
 
-function Btn({ label, onClick, href, outline = false, small = false, icon, iconOutlined = false, ariaLabel }) {
-  const fg = outline ? C.tx : C.bg;
+function Btn({ label, onClick, href, outline = false, small = false, grad = false, icon, iconOutlined = false, ariaLabel }) {
+  const fg = grad ? '#fff' : outline ? C.tx : C.bg;
   const external = href && /^https?:/.test(href);
   const Tag = href ? 'a' : 'button';
   return (
     <Tag
-      className={`btn ${outline ? 'btn-o' : 'btn-f'} ${small ? 'btn-s' : ''}`}
+      className={`btn ${grad ? 'btn-g' : outline ? 'btn-o' : 'btn-f'} ${small ? 'btn-s' : ''}`}
       href={href}
       onClick={onClick}
       target={external ? '_blank' : undefined}
       rel={external ? 'noopener noreferrer' : undefined}
       aria-label={ariaLabel ?? (external ? `${label} (opens in a new tab)` : undefined)}
     >
-      <span className="btn-l" style={ui(small ? 13.5 : 15, { c: fg, w: 600, h: 1.2 })}>{label}</span>
+      <span className="btn-l" style={ui(small ? 14 : 16, { c: fg, w: 600, h: 1.2 })}>{label}</span>
       {icon && (
         <>
-          <span style={{ width: 8, flexShrink: 0 }} />
-          <Icon n={icon} s={18} c={fg} o={iconOutlined} style={{ transition: 'transform 200ms ease' }} />
+          <span style={{ width: 10, flexShrink: 0 }} />
+          <Icon n={icon} s={small ? 18 : 20} c={fg} o={iconOutlined} style={{ transition: 'transform 200ms ease' }} />
         </>
       )}
     </Tag>
   );
 }
 
+// ── Brand marks (simplified, for the "Built with" strip and stage tiles) ──
+const FlutterMark = ({ s = 26 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M14 2 4.2 11.8l3.1 3.1L20.2 2z" fill="#47C5FB" />
+    <path d="M14 11.3 8.8 16.5l5.2 5.3h6.2l-5.2-5.3 5.2-5.2z" fill="#47C5FB" />
+    <path d="M11.9 19.6 14 21.8h6.2L15 16.5z" fill="#00569E" />
+  </svg>
+);
+const FirebaseMark = ({ s = 26 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4.5 18.6 7.1 2.9c.1-.5.8-.6 1-.2l2.7 5z" fill="#FFC24A" />
+    <path d="M12.3 9.1 10.4 5.5c-.2-.4-.7-.4-.9 0L4.5 18.6z" fill="#F6820C" />
+    <path d="M4.5 18.6 16 6.4c.3-.3.9-.2 1 .3l2.5 11.9-6.6 3.8c-.4.2-.9.2-1.3 0z" fill="#FFA000" />
+    <path d="M4.5 18.6 16 6.4c.3-.3.9-.2 1 .3l2.5 11.9-6.6 3.8c-.4.2-.9.2-1.3 0z" fill="#FF6F00" opacity=".35" />
+  </svg>
+);
+const FigmaMark = ({ s = 26 }) => (
+  <svg width={(s * 38) / 57} height={s} viewBox="0 0 38 57" aria-hidden="true">
+    <path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" fill="#1ABCFE" />
+    <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" fill="#0ACF83" />
+    <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19z" fill="#FF7262" />
+    <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" fill="#F24E1E" />
+    <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" fill="#A259FF" />
+  </svg>
+);
+/** Cloud silhouette built from overlapping circles; `label` is drawn inside. */
+function Cloud({ w = 200, label, id, glow = true }) {
+  return (
+    <svg width={w} height={w * 0.66} viewBox="0 0 200 132" aria-hidden="true" style={{ overflow: 'visible' }}>
+      <defs>
+        <linearGradient id={`cg-${id}`} x1="0" y1="0" x2="0.4" y2="1">
+          <stop offset="0" stopColor="#7DD3FC" />
+          <stop offset=".45" stopColor="#1EA7F0" />
+          <stop offset="1" stopColor="#1A56DB" />
+        </linearGradient>
+        {glow && (
+          <filter id={`cf-${id}`} x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="9" />
+          </filter>
+        )}
+      </defs>
+      {glow && (
+        <g filter={`url(#cf-${id})`} opacity=".75" fill="#38BDF8">
+          <circle cx="62" cy="74" r="36" /><circle cx="104" cy="52" r="42" /><circle cx="146" cy="68" r="34" />
+          <circle cx="40" cy="96" r="26" /><circle cx="168" cy="94" r="26" /><rect x="40" y="80" width="128" height="40" rx="20" />
+        </g>
+      )}
+      <g fill={`url(#cg-${id})`}>
+        <circle cx="62" cy="74" r="36" /><circle cx="104" cy="52" r="42" /><circle cx="146" cy="68" r="34" />
+        <circle cx="40" cy="96" r="26" /><circle cx="168" cy="94" r="26" /><rect x="40" y="80" width="128" height="42" rx="21" />
+      </g>
+      <ellipse cx="92" cy="40" rx="34" ry="12" fill="#fff" opacity=".18" />
+      {label && (
+        <text x="104" y="90" textAnchor="middle" fill="#fff" fontFamily="'DM Sans', sans-serif" fontWeight="500" fontSize="31" letterSpacing="-0.5">
+          {label}
+        </text>
+      )}
+    </svg>
+  );
+}
+
 // ── Hero ─────────────────────────────────────────────────────
 const HERO_WORDS = ['I', 'design,', 'build', 'and', 'ship'];
 
+function HeroStage({ compact }) {
+  return (
+    <div className={`stage ${compact ? 'compact' : ''}`} aria-hidden="true">
+      <div className="stage-beam" />
+      <div className="podium">
+        <span className="pd pd-glow" />
+        <span className="pd pd-1" />
+        <span className="pd pd-2" />
+        <span className="pd pd-3" />
+      </div>
+      <svg className="orbit orbit-back" viewBox="0 0 600 260">
+        <defs>
+          <linearGradient id="og" x1="0" x2="1">
+            <stop offset="0" stopColor="#A855F7" stopOpacity=".2" />
+            <stop offset=".5" stopColor="#C084FC" />
+            <stop offset="1" stopColor="#EC4899" stopOpacity=".5" />
+          </linearGradient>
+        </defs>
+        <path d="M20 130 A280 105 0 0 1 580 130" fill="none" stroke="url(#og)" strokeWidth="3" />
+      </svg>
+      <div className="stage-cloud">
+        <Cloud w={360} label="salesforce" id="hero" />
+      </div>
+      <svg className="orbit orbit-front" viewBox="0 0 600 260">
+        <path d="M20 130 A280 105 0 0 0 580 130" fill="none" stroke="url(#og)" strokeWidth="3.5" />
+        <circle cx="560" cy="168" r="5" fill="#F0ABFC" />
+      </svg>
+      <div className="tile t1"><FlutterMark s={50} /></div>
+      <div className="tile t2"><Icon n="bolt" s={54} c="#E9D5FF" /></div>
+      <div className="tile t3"><FigmaMark s={48} /></div>
+      <div className="tile t4"><Icon n="code" s={48} c="#E9D5FF" /></div>
+      {[[8, 20], [30, 6], [62, 14], [88, 30], [16, 62], [94, 70], [48, 2], [76, 52]].map(([x, y], i) => (
+        <span key={i} className="star" style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${i * 0.4}s` }} />
+      ))}
+    </div>
+  );
+}
+
 function Hero({ narrow, gutter, vw, onWork, onContact }) {
   const ref = useRef(null);
-  // Pointer-following light on desktop only.
+  const twoCol = vw >= 1024;
+  // Pointer parallax on desktop only.
   const move = (e) => {
-    if (narrow || !ref.current) return;
+    if (!twoCol || !ref.current) return;
     const r = ref.current.getBoundingClientRect();
-    ref.current.style.setProperty('--hx', `${e.clientX - r.left}px`);
-    ref.current.style.setProperty('--hy', `${e.clientY - r.top}px`);
+    ref.current.style.setProperty('--px', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+    ref.current.style.setProperty('--py', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
   };
-  const tags = SKILLS.flatMap((s) => s[4]);
+  const builtWith = [
+    ['Salesforce', <Cloud key="c" w={46} id="mini" glow={false} />],
+    ['Flutter', <FlutterMark key="f" />],
+    ['Firebase', <FirebaseMark key="b" />],
+    ['Figma', <FigmaMark key="g" />],
+  ];
 
   return (
     <header ref={ref} className="hero" onPointerMove={move}>
       <div className="hero-bg" aria-hidden="true">
-      <div className="hero-grid" aria-hidden="true" />
-      <div className="hero-light" aria-hidden="true" />
-      <div
-        className="glow drift-a"
-        aria-hidden="true"
-        style={{
-          top: -220, left: vw * 0.5 - 380, width: 760, height: 760,
-          background: `radial-gradient(circle closest-side, ${a(M.plum2, 0.55)}, ${a(M.plum, 0)})`,
-        }}
-      />
-      <div
-        className="glow drift-b"
-        aria-hidden="true"
-        style={{
-          top: 360, right: -200, width: 620, height: 620,
-          background: `radial-gradient(circle closest-side, ${a(C.coral, 0.16)}, ${a(C.coral, 0)})`,
-        }}
-      />
+        <span className="wave w1" />
+        <span className="wave w2" />
+        <span className="wave w3" />
+        <span className="wave w4" />
+        <div className="hero-grid" />
       </div>
-      <Frame g={gutter} top={narrow ? 120 : 168} bottom={narrow ? 48 : 72}>
-        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <div className="pill intro" style={{ '--d': '0ms' }}>
-            <span className="pulse" aria-hidden="true" />
-            <span style={{ ...ui(narrow ? 10.5 : 12, { c: C.orchid, w: 600, ls: narrow ? 1.1 : 1.8 }), whiteSpace: 'nowrap' }}>
-              UI/UX&nbsp;&nbsp;·&nbsp;&nbsp;APP DEVELOPMENT&nbsp;&nbsp;·&nbsp;&nbsp;SALESFORCE
-            </span>
-          </div>
-          <div style={{ height: narrow ? 24 : 32 }} />
-          <h1 style={{ ...disp(narrow ? 44 : 104), margin: 0, textWrap: 'balance' }}>
-            {HERO_WORDS.map((wd, i) => (
-              <span key={wd} className="word intro" style={{ '--d': `${80 + i * 60}ms` }}>
-                {wd}
-                {i < HERO_WORDS.length - 1 ? ' ' : ''}
+      <div className="hero-inner" style={{ padding: `${narrow ? 120 : 150}px ${gutter}px ${narrow ? 56 : 72}px` }}>
+        <div className={`hero-cols ${twoCol ? 'two' : ''}`}>
+          <div className="hero-copy">
+            <div className="pill intro" style={{ '--d': '0ms' }}>
+              <span className="pulse" aria-hidden="true" />
+              <span style={{ ...ui(narrow ? 13 : 15, { w: 500 }), color: undefined }}>
+                UI/UX&nbsp;&nbsp;·&nbsp;&nbsp;App Development&nbsp;&nbsp;·&nbsp;&nbsp;Salesforce
               </span>
-            ))}
-            <br />
-            <span className="grad-text intro shimmer" style={{ ...disp(narrow ? 44 : 104, '#fff'), '--d': '420ms' }}>
-              digital products.
-            </span>
-          </h1>
-          <div style={{ height: narrow ? 20 : 30 }} />
-          <p className="intro" style={{ ...ui(narrow ? 15.5 : 18.5, { c: C.mute, h: 1.6 }), maxWidth: 640, margin: 0, '--d': '520ms' }}>
-            UI/UX designer, Flutter app developer and Salesforce developer — taking ideas from first sketch to live product.
-          </p>
-          <div style={{ height: narrow ? 28 : 38 }} />
-          <div className="wrap intro" style={{ gap: 14, justifyContent: 'center', '--d': '620ms' }}>
-            <Btn label="View my work" onClick={onWork} icon="arrow_downward" />
-            <Btn label="Get in touch" onClick={onContact} outline />
-            <Btn label="Resume" href={RESUME} outline icon="description" iconOutlined />
-          </div>
-        </div>
-      </Frame>
-      <div className="marquee intro" style={{ '--d': '760ms' }} aria-label="Tools and skills">
-        <div className="marquee-track">
-          {[0, 1].map((k) => (
-            <div className="marquee-set" key={k} aria-hidden={k === 1 ? 'true' : undefined}>
-              {tags.map((tg) => (
-                <span key={tg} className="marquee-item" style={ui(narrow ? 13 : 14.5, { c: C.mute, w: 500 })}>
-                  <span className="marquee-dot" />
-                  {tg}
+            </div>
+            <div style={{ height: narrow ? 22 : 28 }} />
+            <p className="hello intro" style={{ '--d': '60ms' }}>
+              Hi, I&apos;m <strong className="grad-text">{FULL_NAME}</strong>
+            </p>
+            <div style={{ height: narrow ? 10 : 14 }} />
+            <h1 className="hero-title">
+              {HERO_WORDS.map((wd, i) => (
+                <span key={wd} className="word intro" style={{ '--d': `${120 + i * 60}ms` }}>
+                  {wd}
+                  {i < HERO_WORDS.length - 1 ? ' ' : ''}
                 </span>
               ))}
+              <br />
+              <span className="grad-text hero-grad intro shimmer" style={{ '--d': '460ms' }}>digital products.</span>
+            </h1>
+            <div style={{ height: narrow ? 20 : 26 }} />
+            <p className="intro" style={{ ...ui(narrow ? 16 : 19, { c: C.mute, h: 1.6 }), maxWidth: 620, margin: 0, '--d': '560ms' }}>
+              UI/UX designer, Flutter app developer and Salesforce developer — taking ideas from first sketch to live product.
+            </p>
+            <div style={{ height: narrow ? 28 : 36 }} />
+            <div className="wrap intro" style={{ gap: 16, '--d': '660ms' }}>
+              <Btn label="View my work" onClick={onWork} grad icon="arrow_forward" />
+              <Btn label="Get in touch" onClick={onContact} outline icon="mail_outline" />
+              <Btn label="Resume" href={RESUME} outline icon="description" iconOutlined />
             </div>
-          ))}
+            <div style={{ height: narrow ? 32 : 48 }} />
+            <div className="built intro" style={{ '--d': '780ms' }}>
+              <span className="built-label" style={ui(14, { c: C.mute, w: 500 })}>Built with</span>
+              <span className="built-sep" aria-hidden="true" />
+              <ul className="built-list">
+                {builtWith.map(([name, mark]) => (
+                  <li key={name}>
+                    {mark}
+                    <span style={ui(14.5, { w: 500 })}>{name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="hero-visual intro" style={{ '--d': '300ms' }}>
+            <HeroStage compact={!twoCol} />
+          </div>
         </div>
+        {twoCol && (
+          <button className="scroll-cue intro" style={{ '--d': '1000ms' }} onClick={onWork}>
+            <span style={ui(14, { c: C.mute })}>Scroll to explore</span>
+            <span className="scroll-sep" aria-hidden="true" />
+            <span className="mouse" aria-hidden="true"><span /></span>
+          </button>
+        )}
       </div>
     </header>
   );
@@ -784,7 +925,7 @@ function Footer({ gutter }) {
   return (
     <footer className="footer" style={{ padding: `0 ${gutter}px` }}>
       <div className="footer-in">
-        <span style={ui(13, { c: C.mute })}>{`© ${new Date().getFullYear()} ${NAME}`}</span>
+        <span style={ui(13, { c: C.mute })}>{`© ${new Date().getFullYear()} ${FULL_NAME}`}</span>
         <button className="to-top" onClick={() => scrollToEl(document.body)}>
           <span style={ui(13, { c: C.mute, w: 500 })}>Back to top</span>
           <Icon n="arrow_upward" s={16} c={C.mute} />
