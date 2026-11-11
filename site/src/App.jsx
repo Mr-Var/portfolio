@@ -13,6 +13,7 @@ import skyfitDesktop from './assets/real/skyfit_desktop.jpg';
 const NAME = 'VAR';
 const EMAIL = 'vinayanandharaju215@gmail.com';
 const PHONE = '+91 77992 30357';
+const INSTAGRAM = 'https://www.instagram.com/var.visualss/';
 const RESUME = 'https://drive.google.com/file/d/10mvAQFTDiIcQfnxl9eJ_drvLkOBCyHpp/view?usp=sharing';
 const MEDNU_PLAY = 'https://play.google.com/store/apps/details?id=com.mednu.mednu';
 const RANGA_FIGMA =
@@ -29,6 +30,9 @@ const SKILLS = [
     ['Apex', 'SOQL', 'Lightning Web Components', 'Flows', 'Triggers', 'Integrations']],
   ['UI/UX design', 'Interfaces that look premium and stay usable on every screen size.', 'draw', '#F9943B',
     ['Figma', 'Prototyping', 'Design systems', 'Responsive UI', 'Accessibility']],
+  ['Video editing', 'Reels and social videos — cut, colour-graded and animated.', 'movie', '#FF5C8A',
+    ['Premiere Pro', 'After Effects', 'DaVinci Resolve', 'CapCut'],
+    { label: 'Watch on Instagram', href: INSTAGRAM }],
 ];
 
 const REAL_SITE_H = 6596;
@@ -204,7 +208,7 @@ function Nav({ narrow, gutter, links, onContact, active }) {
   );
 }
 
-function Btn({ label, onClick, href, outline = false, small = false, icon, iconOutlined = false, ariaLabel }) {
+function Btn({ label, onClick, href, outline = false, small = false, icon, iconOutlined = false, ariaLabel, glyph }) {
   const fg = outline ? C.tx : C.bg;
   const external = href && /^https?:/.test(href);
   const Tag = href ? 'a' : 'button';
@@ -218,6 +222,12 @@ function Btn({ label, onClick, href, outline = false, small = false, icon, iconO
       aria-label={ariaLabel ?? (external ? `${label} (opens in a new tab)` : undefined)}
     >
       <span className="btn-l" style={ui(small ? 13.5 : 15, { c: fg, w: 600, h: 1.2 })}>{label}</span>
+      {glyph && (
+        <>
+          <span style={{ width: 8, flexShrink: 0 }} />
+          {glyph(fg)}
+        </>
+      )}
       {icon && (
         <>
           <span style={{ width: 8, flexShrink: 0 }} />
@@ -268,8 +278,9 @@ function Hero({ narrow, gutter, vw, onWork, onContact }) {
         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <div className="pill intro" style={{ '--d': '0ms' }}>
             <span className="pulse" aria-hidden="true" />
-            <span style={{ ...ui(narrow ? 10.5 : 12, { c: C.orchid, w: 600, ls: narrow ? 1.1 : 1.8 }), whiteSpace: 'nowrap' }}>
-              UI/UX&nbsp;&nbsp;·&nbsp;&nbsp;APP DEVELOPMENT&nbsp;&nbsp;·&nbsp;&nbsp;SALESFORCE
+            <span style={ui(narrow ? 10.5 : 12, { c: C.orchid, w: 600, ls: narrow ? 1.1 : 1.8, h: 1.7 })}>
+              UI/UX&nbsp;&nbsp;·&nbsp;&nbsp;APP&nbsp;DEVELOPMENT&nbsp;&nbsp;·&nbsp;&nbsp;SALESFORCE&nbsp;&nbsp;·{' '}
+              {narrow && <br />}VIDEO&nbsp;EDITING
             </span>
           </div>
           <div style={{ height: narrow ? 24 : 32 }} />
@@ -287,7 +298,7 @@ function Hero({ narrow, gutter, vw, onWork, onContact }) {
           </h1>
           <div style={{ height: narrow ? 20 : 30 }} />
           <p className="intro" style={{ ...ui(narrow ? 15.5 : 18.5, { c: C.mute, h: 1.6 }), maxWidth: 640, margin: 0, '--d': '520ms' }}>
-            UI/UX designer, Flutter app developer and Salesforce developer — taking ideas from first sketch to live product.
+            UI/UX designer, Flutter app developer, Salesforce developer and video editor — taking ideas from first sketch to live product.
           </p>
           <div style={{ height: narrow ? 28 : 38 }} />
           <div className="wrap intro" style={{ gap: 14, justifyContent: 'center', '--d': '620ms' }}>
@@ -343,7 +354,7 @@ function Head({ eyebrow, title, sub, narrow }) {
 // ── Skills (bento) ───────────────────────────────────────────
 function SkillCard({ s, i, big }) {
   const ref = useDiag();
-  const [title, desc, icon, accent, tags] = s;
+  const [title, desc, icon, accent, tags, link] = s;
   return (
     <article
       ref={ref}
@@ -369,6 +380,11 @@ function SkillCard({ s, i, big }) {
           <li key={tg} className="tag" style={{ ...ui(12.5, { h: 1.2 }), padding: '7px 12px' }}>{tg}</li>
         ))}
       </ul>
+      {link && (
+        <div style={{ marginTop: 22 }}>
+          <Btn label={link.label} href={link.href} glyph={InstagramGlyph} small />
+        </div>
+      )}
     </article>
   );
 }
@@ -377,7 +393,7 @@ function SkillsBlock({ narrow, vw }) {
   const cols = narrow ? 1 : vw < 1100 ? 2 : 3;
   return (
     <div>
-      <Head eyebrow="What I do" title={'Three disciplines,\none pair of hands.'} narrow={narrow} />
+      <Head eyebrow="What I do" title={'Four disciplines,\none pair of hands.'} narrow={narrow} />
       <div className={`bento cols-${cols}`}>
         {SKILLS.map((s, i) => <SkillCard key={s[0]} s={s} i={i} big={i === 0 && cols > 1} />)}
       </div>
@@ -774,6 +790,7 @@ function Contact({ narrow, onCopied }) {
           </div>
           <Btn label={PHONE} href={`tel:${PHONE.replace(/ /g, '')}`} outline icon="call" iconOutlined ariaLabel={`Call ${PHONE}`} />
           <Btn label="Resume" href={RESUME} outline icon="description" iconOutlined />
+          <Btn label="Instagram" href={INSTAGRAM} outline glyph={InstagramGlyph} ariaLabel="Video work on Instagram (opens in a new tab)" />
         </div>
       </div>
     </div>
@@ -791,5 +808,17 @@ function Footer({ gutter }) {
         </button>
       </div>
     </footer>
+  );
+}
+
+/** Instagram mark (outline), sized like the 18px button icons. */
+function InstagramGlyph(color) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.6" fill={color} stroke="none" />
+    </svg>
   );
 }
