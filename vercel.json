@@ -1,6 +1,7 @@
 {
-  "installCommand": "git clone https://github.com/flutter/flutter.git -b stable --depth 1 && flutter/bin/flutter config --enable-web",
-  "buildCommand": "flutter/bin/flutter build web --release",
-  "outputDirectory": "build/web",
+  "framework": null,
+  "installCommand": "cd site && npm install",
+  "buildCommand": "cd site && npm run build",
+  "outputDirectory": "site/dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
