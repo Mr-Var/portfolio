@@ -8,6 +8,8 @@ import { FigmaArt, courtPaint, meridianPaint, rangaPaint } from './figma.jsx';
 import { reducedMotion, spotlight, useActiveSection, useRevealAll, useScrollProgress, useToast } from './fx.jsx';
 import desktopFull from './assets/real/desktop_full.jpg';
 import skyfitDesktop from './assets/real/skyfit_desktop.jpg';
+import logoDark from './assets/brand/var-logo-dark.png';
+import logoLight from './assets/brand/var-logo-light.png';
 
 // Edit these to personalise the page.
 const NAME = 'VAR';
@@ -175,8 +177,8 @@ function Nav({ narrow, gutter, links, onContact, active, onHome }) {
       <div className="nav-progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
       <nav className={`nav ${scrolled ? 'scrolled' : ''}`} style={{ left: gutter, right: gutter }} aria-label="Primary">
         <a href="#main" className="logo" onClick={(e) => { e.preventDefault(); onHome(); }} aria-label={`${FULL_NAME} — back to top`}>
-          <span style={disp(30)}>{NAME}</span>
-          <span className="nav-dot" />
+          <img src={logoDark} alt="" className="brand-logo brand-dark" width="88" height="60" />
+          <img src={logoLight} alt="" className="brand-logo brand-light" width="88" height="60" />
         </a>
         <span style={{ flex: 1 }} />
         {!narrow && (
