@@ -133,7 +133,7 @@ const Frame = forwardRef(function Frame({ g, top = 0, bottom = 0, children, id }
 function useTheme() {
   const [theme, setTheme] = useState(() => {
     try {
-      return localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+      return sessionStorage.getItem('var-theme') === 'light' ? 'light' : 'dark';
     } catch {
       return 'dark';
     }
@@ -141,7 +141,7 @@ function useTheme() {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#F7F5FB' : '#07051A');
-    try { localStorage.setItem('theme', theme); } catch { /* private mode */ }
+    try { sessionStorage.setItem('var-theme', theme); } catch { /* private mode */ }
   }, [theme]);
   return [theme, () => setTheme((t) => (t === 'light' ? 'dark' : 'light'))];
 }
