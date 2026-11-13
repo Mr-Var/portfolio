@@ -926,7 +926,7 @@ function Footer({ gutter }) {
   return (
     <footer className="footer" style={{ padding: `0 ${gutter}px` }}>
       <div className="footer-in">
-        <span style={ui(13, { c: C.mute })}>{`© ${new Date().getFullYear()} ${FULL_NAME}`}</span>
+        <span style={ui(13, { c: C.mute })}>{`© ${new Date().getFullYear()} ${FULL_NAME} (${NAME})`}</span>
         <button className="to-top" onClick={() => scrollToEl(document.body)}>
           <span style={ui(13, { c: C.mute, w: 500 })}>Back to top</span>
           <Icon n="arrow_upward" s={16} c={C.mute} />
