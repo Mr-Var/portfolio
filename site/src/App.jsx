@@ -8,6 +8,7 @@ import { FigmaArt, courtPaint, meridianPaint, rangaPaint } from './figma.jsx';
 import { reducedMotion, spotlight, useActiveSection, useRevealAll, useScrollProgress, useToast } from './fx.jsx';
 import desktopFull from './assets/real/desktop_full.jpg';
 import skyfitDesktop from './assets/real/skyfit_desktop.jpg';
+import ngccDesktop from './assets/real/ngcc_desktop.jpg';
 import logoDark from './assets/brand/var-logo-dark.png';
 import logoLight from './assets/brand/var-logo-light.png';
 
@@ -36,6 +37,7 @@ const SKILLS = [
 
 const REAL_SITE_H = 6596;
 const SKYFIT_SITE_H = 1196;
+const NGCC_SITE_H = 3138;
 const ROTATE_MS = 7000;
 
 // ── Smooth scroll (700ms easeInOutCubic; instant under reduced motion) ──
@@ -784,6 +786,8 @@ function Websites({ narrow, gutter, vw }) {
         {item('mednu.in', 'MedNU', 'MedNU — live website', 'The production site, captured in full.', REAL_SITE_H, desktopFull, 0)}
         {item('skyfit-one.vercel.app', 'skyXfit', 'skyXfit — fitness calculator',
           'BMI, body-fat, calorie and macro calculator for a fitness channel.', SKYFIT_SITE_H, skyfitDesktop, 1)}
+        {item('ngcc-cancure.com', 'NGCC', 'NGCC — cancer hospital website',
+          'Navya Global Cancer Centre, Vizag: departments, live wait times, health packages and appointments.', NGCC_SITE_H, ngccDesktop, 2)}
       </div>
     </div>
   );
