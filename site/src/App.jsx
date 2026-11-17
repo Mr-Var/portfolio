@@ -17,7 +17,7 @@ const NAME = 'VAR';
 const FULL_NAME = 'Vinayananda Raju';
 const EMAIL = 'vinayanandharaju215@gmail.com';
 const PHONE = '+91 77992 30357';
-const RESUME = 'https://drive.google.com/file/d/10mvAQFTDiIcQfnxl9eJ_drvLkOBCyHpp/view?usp=sharing';
+const RESUME = 'https://drive.google.com/file/d/1zdX6rs7WmtvaR6e_Aj7HnZh6ReELuw25/view?usp=sharing';
 const MEDNU_PLAY = 'https://play.google.com/store/apps/details?id=com.mednu.mednu';
 const RANGA_FIGMA =
   'https://www.figma.com/design/ENoE68ZPXz8mwXheSg5HGD/Ranga-%E2%80%93-Streaming-App-Case-Study?node-id=1-1179';
