@@ -17,6 +17,9 @@ const NAME = 'VAR';
 const FULL_NAME = 'Vinayananda Raju';
 const EMAIL = 'vinayanandharaju215@gmail.com';
 const PHONE = '+91 77992 30357';
+// Message a visitor sees pre-typed when they tap the WhatsApp button.
+const WA_TEXT = "Hi Vinayananda, I came across your portfolio. Nice to connect with you! I'd like to know more about your work and explore working together.";
+const WHATSAPP = `https://wa.me/${PHONE.replace(/\D/g, '')}?text=${encodeURIComponent(WA_TEXT)}`;
 const RESUME = 'https://drive.google.com/file/d/1zdX6rs7WmtvaR6e_Aj7HnZh6ReELuw25/view?usp=sharing';
 const MEDNU_PLAY = 'https://play.google.com/store/apps/details?id=com.mednu.mednu';
 const RANGA_FIGMA =
@@ -117,6 +120,7 @@ export default function App() {
         </Frame>
       </main>
       <Footer gutter={gutter} />
+      <WhatsAppFab />
       {toast}
     </div>
   );
@@ -244,7 +248,7 @@ function Nav({ narrow, gutter, links, onContact, active, onHome }) {
   );
 }
 
-function Btn({ label, onClick, href, outline = false, small = false, grad = false, icon, iconOutlined = false, ariaLabel }) {
+function Btn({ label, onClick, href, outline = false, small = false, grad = false, icon, iconNode, iconOutlined = false, ariaLabel }) {
   const fill = grad || !outline;
   const fg = fill ? '#fff' : C.tx;
   const external = href && /^https?:/.test(href);
@@ -259,13 +263,32 @@ function Btn({ label, onClick, href, outline = false, small = false, grad = fals
       aria-label={ariaLabel ?? (external ? `${label} (opens in a new tab)` : undefined)}
     >
       <span className="btn-l" style={ui(small ? 14 : 16, { c: fg, w: 600, h: 1.2 })}>{label}</span>
-      {icon && (
+      {(icon || iconNode) && (
         <>
           <span style={{ width: 10, flexShrink: 0 }} />
-          <Icon n={icon} s={small ? 18 : 20} c={fg} o={iconOutlined} style={{ transition: 'transform 200ms ease' }} />
+          {iconNode ?? <Icon n={icon} s={small ? 18 : 20} c={fg} o={iconOutlined} style={{ transition: 'transform 200ms ease' }} />}
         </>
       )}
     </Tag>
+  );
+}
+
+/** WhatsApp-style glyph: speech bubble with a handset. */
+function WaGlyph({ s = 20, c = 'currentColor' }) {
+  return (
+    <svg width={s} height={s} viewBox="0 0 24 24" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <path d="M12 2.6a9.4 9.4 0 0 0-8.1 14.2L2.6 21.4l4.7-1.3A9.4 9.4 0 1 0 12 2.6z" fill="none" stroke={c} strokeWidth="1.8" strokeLinejoin="round" />
+      <path transform="translate(6.2 6.2) scale(.48)" fill={c} d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 0 0-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
+    </svg>
+  );
+}
+
+/** Floating WhatsApp shortcut, bottom-right on every screen. */
+function WhatsAppFab() {
+  return (
+    <a className="wa-fab" href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="Chat with me on WhatsApp (opens in a new tab)" title="Chat on WhatsApp">
+      <WaGlyph s={30} c="#fff" />
+    </a>
   );
 }
 
@@ -920,6 +943,7 @@ function Contact({ narrow, onCopied }) {
               <Icon n="content_copy" s={18} c={C.tx} o />
             </button>
           </div>
+          <Btn label="WhatsApp" href={WHATSAPP} outline iconNode={<WaGlyph s={20} c="var(--tx)" />} ariaLabel="Chat with me on WhatsApp (opens in a new tab)" />
           <Btn label={PHONE} href={`tel:${PHONE.replace(/ /g, '')}`} outline icon="call" iconOutlined ariaLabel={`Call ${PHONE}`} />
           <Btn label="Resume" href={RESUME} outline icon="description" iconOutlined />
         </div>
